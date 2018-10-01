@@ -20,20 +20,22 @@ app.engine('handlebars', exphbs({
 }));
 app.set('view engine', 'handlebars');
 
-
-var databaseUri = 'mongodb://localhost/scraped_news';
-
-if (process.env.MONGODB_URI){
-  mongoose.connect(process.env.MONGOD_URI);
-} else {
-  mongoose.connect(databaseUri);
+if(process.env.NODE_ENV == 'production'){
+  mongoose.connect('mongodb://heroku_l96d37j5:i8q22i10h0vr88j6ie7vdjpgs6@ds119370.mlab.com:19370/heroku_l96d37j5');
 }
-
+else{
+  mongoose.connect('mongodb://localhost/WebScraper');
+}
 var db = mongoose.connection;
 
-db.on('error', console.error.bind(console, 'connection error:'));
+// Show any Mongoose errors
+db.on('error', function(err) {
+  console.log('Mongoose Error: ', err);
+});
+
+// Once logged in to the db through mongoose, log a success message
 db.once('open', function() {
-  console.log('Connected to Mongoose!')
+  console.log('Mongoose connection successful.');
 });
 
 var routes = require('./controller/controller.js');

@@ -30,6 +30,9 @@ router.get('/scrape', function(req, res) {
 
    
         // Add the text and href of every link, and save them as properties of the result object
+
+        // result.headline = $(this).find('.latest-summary').text();
+
         result.title = $(this).children("a").text();
       
           
