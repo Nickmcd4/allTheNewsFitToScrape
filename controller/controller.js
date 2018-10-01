@@ -23,61 +23,62 @@ router.get('/scrape', function(req, res) {
         // Then, we load that into cheerio and save it to $ for a shorthand selector
         var $ = cheerio.load(html);
         var titlesArray = [];
-        // Now, we grab every article
-        $(".latest-head").each(function(i, element) {
-            // Save an empty result object
-            var result = {};
-
-   
+    // Now, we grab every h2 within an article tag, and do the following:
+    $(".tab-pane").each(function(i, element) {
+        // Save an empty result object
+        var result = {};
+  
         // Add the text and href of every link, and save them as properties of the result object
-
-        // result.headline = $(this).find('.latest-summary').text();
-
-        result.title = $(this).children("a").text();
-      
+          result.headline = $(this).find('.latest-summary').text();
+          console.log("Headlines: " + result.headline)
           
-        result.link = $(this).children("a").attr("href");
+        result.title = $(this).children('.latest-head').text();
+          console.log("Title: " + result.title)
+        
+          
+        result.link = "https://www.sciencedaily.com/news/computers_math/computer_programming" + $(this).children("a").attr("href");
+          
 
 
-            //no empty results get pushed to database
-            if(result.title !== "" && result.link !== ""){
-             //prevents duplicate 
-                if(titlesArray.indexOf(result.title) == -1){
-  
-                  
-                  titlesArray.push(result.title);
-  
-                 //Prevents duplicate articles, doesnt add if already exists 
-                  Article.count({ title: result.title}, function (err, test){
-                      //checks to see if good to save to database 
-                    if(test == 0){
-  
-                      //new object using article module
-                      var entry = new Article (result);
-  
-                     //save to mongo
-                      entry.save(function(err, doc) {
-                        if (err) {
-                          console.log(err);
-                        } else {
-                          console.log(doc);
-                        }
-                      });
-  
-                    }
-              });
+            //ensures that no empty title or links are sent to mongodb
+            if(result.title !== "" && result.link !== "" && result.headline !== ""){
+              //check for duplicates
+              if(titlesArray.indexOf(result.title) == -1){
+
+                // push the saved title to the array 
+                titlesArray.push(result.title);
+
+                // only add the article if is not already there
+                Article.count({ title: result.title}, function (err, test){
+                    //if the test is 0, the entry is unique and good to save
+                  if(test == 0){
+
+                    //using Article model, create new object
+                    var entry = new Article (result);
+
+                    //save entry to mongodb
+                    entry.save(function(err, doc) {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        console.log(doc);
+                      }
+                    });
+
+                  }
+            });
+        }
+        // Log that scrape is working, just the content was missing parts
+        else{
+          console.log('Article already exists.')
+        }
+
           }
           // Log that scrape is working, just the content was missing parts
           else{
-            console.log('Article already exists.')
+            console.log('Not saved to DB, missing data')
           }
-  
-            }
-            // Log that scrape is working, just the content was missing parts
-            else{
-              console.log('Not saved to DB, missing data')
-            }
-          });
+        });
         // after scrape, redirects to index
         res.redirect('/');
     });
