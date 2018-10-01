@@ -38,8 +38,46 @@ router.get('/scrape', function(req, res) {
           
         result.link = $(this).children("a").attr("href");
 
-           
-        });
+
+            //no empty results get pushed to database
+            if(result.title !== "" && result.link !== ""){
+             //prevents duplicate 
+                if(titlesArray.indexOf(result.title) == -1){
+  
+                  
+                  titlesArray.push(result.title);
+  
+                 //Prevents duplicate articles, doesnt add if already exists 
+                  Article.count({ title: result.title}, function (err, test){
+                      //checks to see if good to save to database 
+                    if(test == 0){
+  
+                      //new object using article module
+                      var entry = new Article (result);
+  
+                     //save to mongo
+                      entry.save(function(err, doc) {
+                        if (err) {
+                          console.log(err);
+                        } else {
+                          console.log(doc);
+                        }
+                      });
+  
+                    }
+              });
+          }
+          // Log that scrape is working, just the content was missing parts
+          else{
+            console.log('Article already exists.')
+          }
+  
+            }
+            // Log that scrape is working, just the content was missing parts
+            else{
+              console.log('Not saved to DB, missing data')
+            }
+          });
         // after scrape, redirects to index
         res.redirect('/');
     });
