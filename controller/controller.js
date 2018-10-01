@@ -30,13 +30,13 @@ router.get('/scrape', function(req, res) {
   
         // Add the text and href of every link, and save them as properties of the result object
           result.headline = $(this).find('.latest-summary').text();
-          console.log("Headlines: " + result.headline)
+         
           
         result.title = $(this).children('.latest-head').text();
-          console.log("Title: " + result.title)
+          
         
           
-        result.link = "https://www.sciencedaily.com/news/computers_math/computer_programming" + $(this).children("a").attr("href");
+        result.link = $(this).find("a").attr("href");
           
 
 
