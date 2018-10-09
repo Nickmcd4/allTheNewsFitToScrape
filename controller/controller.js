@@ -30,13 +30,13 @@ router.get('/scrape', function(req, res) {
   
         // Add the text and href of every link, and save them as properties of the result object
           result.headline = $(this).find('.latest-summary').text();
-         
+          console.log("Headlines: " + result.headline)
           
         result.title = $(this).children('.latest-head').text();
-          
+          console.log("Title: " + result.title)
         
           
-        result.link = $(this).find("a").attr("href");
+        result.link = "https://www.sciencedaily.com/news/computers_math/computer_programming" + $(this).children("a").attr("href");
           
 
 
@@ -143,7 +143,7 @@ router.get("/articles/:id", function(req, res) {
   // Route for saving/updating an Article's associated Note
 router.post("/articles/:id", function(req, res) {
     // Create a new note and pass the req.body to the entry
-    Article.Comment.create(req.body)
+    Comment.create({title:req.body.title, body:req.body.body})
       .then(function(dbcomment) {
         // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
         // { new: true } tells the query that we want it to return the updated User -- it returns the original by default

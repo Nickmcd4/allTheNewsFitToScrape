@@ -20,6 +20,17 @@ app.engine('handlebars', exphbs({
 }));
 app.set('view engine', 'handlebars');
 
+
+// mongoose.connect('mongodb://localhost/scraped_news');
+
+
+// var db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'connection error:'));
+// db.once('open', function() {
+//   console.log('Connected to Mongoose!')
+// });
+
+
 if(process.env.NODE_ENV == 'production'){
   mongoose.connect('mongodb://heroku_l96d37j5:i8q22i10h0vr88j6ie7vdjpgs6@ds119370.mlab.com:19370/heroku_l96d37j5');
 }
@@ -37,6 +48,7 @@ db.on('error', function(err) {
 db.once('open', function() {
   console.log('Mongoose connection successful.');
 });
+
 
 var routes = require('./controller/controller.js');
 app.use('/', routes);
