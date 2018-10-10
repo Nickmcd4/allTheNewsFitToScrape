@@ -25,13 +25,13 @@ $.getJSON("/articles-json", function(data) {
 
       for (var i = 0; i < data.length; i++) {
         // Display the apropos information on the page
-      //  console.log("LOOK AT ME" + data[i]._id + data[i].title + data[i].link);
+       console.log("LOOK AT ME" + data[i]._id + data[i].title + data[i].link);
      
         
       }
-      $("#commentSection").prepend(data.comment[0].title);
+      $("#commentSection").append(data.comment[0].title);
 
-      $("#commentSection").prepend(data.comment[0].body);
+      $("#commentSection").append(data.comment[0].body);
   })
 
 
